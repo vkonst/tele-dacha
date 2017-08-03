@@ -1,11 +1,11 @@
 # tele-dacha
-Bash scripts which monitor environmental/consumption data of a country house for almost 10 years.
+Bash scripts which collect and monitor environmental/consumption data of a country house for almost 10 years.
 
 ## System overview
-The system is based upon a network of ~50 sensors and actuators and a few linux boxes which 24x7 monitor/analyze data and trigger events and control commands to the actuators. 
+The system comprises a network of ~30 sensors / actuators, a few USB webcams and a few linux boxes which 24x7 monitor/analyze data, trigger event messages and control commands to the actuators. 
 
 The main controller for the sensors network - "toledo" host, a chip router running OpenWrt.
-The "palermo" hosts, an old notebook running Debian, processes the data from toledo and communicates to the world.  
+The "palermo" hosts, an old notebook running Debian, processes the data from toledo and webcams and communicates to the world.  
 
 #### Sensors and actuators
 ##### Dallas 1-Wire network
@@ -14,13 +14,13 @@ The "palermo" hosts, an old notebook running Debian, processes the data from tol
 - Temperature sensors on hot water lines
 - Outdoor and underfloor temperature sensors
 - Humidity sensors - indoor and outdoor
-- Signal sensors and actuators on heat system valves
-- In-house ventilation system switch
+- 220v sensors and actuators on floor heating system valves
+- Power on/off switch for the in-house ventilation system
 - Heat Pump control sensors and switches
-- Counters on water-meter and Electricity power meter
+- Counters on the Water-meter and Electricity-meter
 - undisclosed security sensors
 <br />
-In total, about fifty 1-Wire chpis...
+In total, a couple of dozens self-made and self-mounted devices (electrical circuits) which incorporates ~thirty 1-Wire chips. Plus a few hundred meters of cat5 cable that connects these circuits all over the house..
 
 #### Hots and software:
 ##### palermo _(alias - vkhome-fi)_
@@ -39,6 +39,7 @@ Running services:<br />
 - 1W-Sys monitors (alarms and event generatig scripts)
 - Scripts monitoring hosts 
 - SSH server, remote access proxy, network router and firewall...
+- client (gateway) to email (gmail), Telegram messenger
 
 ##### toledo
 **interface to the 1-Wire network**<br>
@@ -64,4 +65,4 @@ Running services:<br />
 ##### Remote and cloud servers
 - remote access proxy - provides ssh tunnels
 - cloud MQTT server: re-translate messages from/to rome 
-- rome - collects and logs data via the cloud MQTT server, pushes alarm messages to mobile devices
+- rome - collects and logs data via the cloud MQTT server
