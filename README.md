@@ -1,7 +1,7 @@
 # tele-dacha
 Scripts which collect and monitor environmental/consumption data of a country house for almost 10 years.<br />
-Intentionally written in Bash (mostly in old "Busybox" dialect), well before the node.js overcame the world, to run it on cheap boxes/routers.<br />
-  
+_Intentionally written in Bash (mostly in old "Busybox" dialect) to run it on cheap boxes/routers, well before the node.js overcame the world._<br />
+
 ## System overview
 The system comprises a network of ~30 sensors / actuators, a few USB webcams and a few linux boxes which 24x7 monitor/analyze data, trigger event messages and commands to the actuators. 
 
