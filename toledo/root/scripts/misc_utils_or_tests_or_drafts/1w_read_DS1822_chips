@@ -1,0 +1,15 @@
+#!/bin/sh
+
+param="temperature"
+
+chips=`owdir | grep "\/28\."`
+
+if ! [ $? -eq 0 ]; then
+	exit 1
+fi	
+	
+for chip in $chips
+	do echo "`date` ; read ; $chip ; $param ; `owread $chip/$param` ; ($?)"
+done
+
+

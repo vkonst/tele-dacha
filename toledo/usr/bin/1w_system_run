@@ -1,0 +1,386 @@
+#!/bin/sh
+Version=13
+
+# Buffering and logging
+DATA_LOG="/home/1w/sensor_readings.log"	# file to write sensor data into
+DATA_BUFFER="/tmp/sensor_readings.log"	# file to temproraly write data
+DATA_LOGGER="/usr/bin/tee -a $DATA_BUFFER"
+COLLECTD_LOG="/home/1w/1w_collectd.log"	# file for data in collectd (RRD) format
+COLLECTD_BUFFER="/tmp/1w_collectd.log"	# file to temproraly write data (RRD)
+COLLECTD_LOGGER="/usr/bin/tee -a $COLLECTD_BUFFER"
+PROC_LOGGER="/usr/bin/logger -t 1w_sys_v$Version[$$]"
+MQTT_BUFFER="/tmp/1w_mqtt.log"		# file to temproraly write data (MQTT)
+MQTT_ARCHIVER="/usr/bin/logger -t 1w_mqtt"
+MQTT_LOGGER="/usr/bin/tee -a $MQTT_BUFFER"
+
+# Interval in seconds to re-read sensors / re-write switches / check 1w-bus
+SEC_READ_TEMP=120	# read temperature sensors
+SEC_READ_HUMIDITY=120	# read humidity sensors
+SEC_READ_COUNTERS=60	# read counters
+SEC_READ_GPIO=60	# read 220v sensors
+SEC_READ_BUS=300	# list devices on 1w-bus
+SEC_CTRL_EQP=120	# switch on/off ventillation and heat pump
+SEC_SAVE_BUFFER=1200	# save sensor data buffer to log file
+
+# commands to read sensors / control 1w-bus
+START_OWSERVER="/etc/init.d/owserver start"
+RESTART_OWSERVER="/etc/init.d/owserver restart"
+READ_TEMP="read_1w 28 temperature"
+READ_HUMIDITY="read_humidity"
+READ_GPIO="read_gpio"
+READ_COUNTERS="read_1w 1D counters.all"
+READ_BUS="read_1w [0-9A-Z]{2} type"
+
+# minimum number of chips on alive 1w-bus -
+# owserver shall be restarted if actual number of chips gets less then: 
+MIN_QTY_TEMP_CHIPS=18		# qty of temperature sensors
+MIN_QTY_GPIO_CHIPS=4		# qty of GPIO chips
+MIN_QTY_COUN_CHIPS=2		# qty of counter chips
+MIN_QTY_CHIPS=25		# qty of all chips
+
+# commands to control equipment
+CTRL_VENT="/usr/bin/control_ILTO400M.sh"
+CTRL_HEAT="/usr/bin/control_HeatPump.sh"
+
+# sensor nicknames
+source /etc/config/1w_system_sensors
+
+collectd_write()
+{
+if [[ -e $COLLECTD_BUFFER ]]; then
+ if [[ "$1" ]]; then echo "1w_sys/$1" | $COLLECTD_LOGGER; fi
+else
+  echo "$COLLECTD_BUFFER not found, collectd exec daemon running?" | $PROC_LOGGER
+fi
+}
+
+mqtt_write()
+{
+if [[ -e $MQTT_BUFFER ]]; then
+ if [[ "$1" ]]; then
+   echo "$1" | $MQTT_ARCHIVER
+   echo "$1" | $MQTT_LOGGER
+ fi
+else
+  echo "$MQTT_BUFFER not found" | $PROC_LOGGER
+fi
+}
+
+restart_ow()
+{
+echo "restarting owserver ($1)" | $PROC_LOGGER
+$RESTART_OWSERVER | $PROC_LOGGER
+}
+
+read_gpio()
+{
+read_1w 12 sensed.Byte
+read_1w 05 sensed
+read_1w 3A sensed.Byte
+}
+
+read_humidity()
+{
+read_1w 26 temperature
+read_1w 26 VAD
+read_1w 26 VDD 372D9D010000
+read_1w 26 HIH4000/humidity 372D9D010000
+}
+
+read_1w()
+{
+# $1 - regex for chip family code, $2 - value (param) to read, $3 - [opt] regex for chip address:
+#read_1w 28 temperature
+#read_1w 26 HIH4000/humidity
+#read_1w 26 VAD
+#read_1w 26 VAD 372D9D010000
+#read_1w 26 VDD
+#read_1w 26 temperature
+#read_1w 1D counters.all
+#read_1w 12 sensed.Byte
+#read_1w 05 sensed
+#read_1w 3A sensed.Byte
+#read_1w [0-9A-Z]{2} type
+
+local timestamp
+local time_epoch
+local value
+local n=0
+local chip
+local addrr
+local nick
+
+local family="$1"
+local property="$2"
+local chip_addr_regex="$3"
+
+local chips=`owdir |  sed 's/^\ *\///' | grep -E "^$family\.$chip_addr_regex"`
+local status="$?"
+
+if ! [ "$status" -eq "0" ]; then
+  restart_ow "read_1w failed"
+else
+  for chip in $chips; do
+
+    addrr=`echo $chip | sed 's/^..\.//'`
+    timestamp=`date -Iseconds`
+    time_epoch=`date +%s`	# -d $timestamp -D '%Y-%m-%dT%H:%M:%S%z'
+    value=`owread $chip/$property`
+    status="$?"
+
+    if [ "$status" -eq "0" ]; then
+      value=`echo $value | tr -d " "`
+      echo "$timestamp;read;$chip;$property;$value;($status)" | $DATA_LOGGER
+
+      case "$family$property" in
+
+        28temperature)
+          # use chip nickname instead of address (if configured)
+          nick=DS18B20_${addrr}_nick; eval nick='$'$nick; if [ -z $nick ]; then nick=$addrr; fi
+          # use pre-defined collectd data type "temperature"
+          collectd_write "temperature-$nick interval=$SEC_READ_TEMP $time_epoch:$value"
+          mqtt_write "temperature-$nick $value @$time_epoch"
+        ;;
+
+	26temperature|26VAD|26VDD|26HIH4000/humidity)
+          # use chip nickname instead of address (if configured)
+          nick=DS2438_${addrr}_nick; eval nick='$'$nick; if [ -z $nick ]; then nick=$addrr; fi
+	  # Values to log: chip temperature, input and output voltage, humidity
+          case "$property" in
+		temperature)
+		  # use pre-defined collectd data type "temperature"
+          	  collectd_write "temperature-$nick interval=$SEC_READ_HUMIDITY $time_epoch:$value"
+          	  mqtt_write "temperature-$nick $value @$time_epoch"
+		;;
+		VAD)
+          	  # use pre-defined collectd data type "voltage"
+          	  collectd_write "voltage-vad-$nick interval=$SEC_READ_HUMIDITY $time_epoch:$value"
+          	  mqtt_write "voltage-vad-$nick $value @$time_epoch"
+		;;
+                VDD)
+                  # use pre-defined collectd data type "voltage"
+                  collectd_write "voltage-vdd-$nick interval=$SEC_READ_HUMIDITY $time_epoch:$value"
+                  mqtt_write "voltage-vdd-$nick $value @$time_epoch"
+                ;;
+		HIH4000/humidity)
+          	  # use pre-defined collectd data type "humidity"
+          	  collectd_write "humidity-$nick interval=$SEC_READ_HUMIDITY $time_epoch:$value"
+          	  mqtt_write "humidity-$nick $value @$time_epoch"
+		;;
+	  esac
+       	;;
+
+        12sensed.Byte|05sensed|3Asensed.Byte)
+
+          case "$value" in
+          # pulled-up pins (if value_bit==0 then voltage=detected)
+            0) pioA=1; pioB=1 ;;
+            1) pioA=0; pioB=1 ;;
+            2) pioA=1; pioB=0 ;;
+            3) pioA=0; pioB=0 ;;
+            *) pioA=U; pioB=U ;;
+          esac
+
+          # "digt_in on-off:GAUGE:0:1" shall be declared in collectd types db
+
+	  case "$family" in
+	    12)
+		dsCode="DS2406"
+		numChannels="2"
+		;;
+	    3A)
+                dsCode="DS2413"
+                numChannels="2"
+                ;;
+	    05)
+                dsCode="DS2405"
+                numChannels="1"
+		;;
+	    esac
+
+          nick=${dsCode}_${addrr}_nickA; eval nick='$'$nick; if [ -z $nick ]; then nick=${addrr}_A; fi
+          collectd_write "digt_in-$nick interval=$SEC_READ_GPIO  $time_epoch:$pioA"
+          mqtt_write "digt_in-$nick $pioA @$time_epoch"
+
+	  if [ "${numChannels}" -eq "2" ]; then
+          nick=${dsCode}_${addrr}_nickB; eval nick='$'$nick; if [ -z $nick ]; then nick=${addrr}_B; fi
+          collectd_write "digt_in-$nick interval=$SEC_READ_GPIO $time_epoch:$pioB"
+          mqtt_write "digt_in-$nick $pioB @$time_epoch"
+	  fi
+
+        ;;
+         
+       1Dcounters.all)
+          # $value example: "2090126,8490053"
+          # new type "count" shall be defined in collectd types db:
+          # count value:GAUGE:0:4294967295, rate:COUNTER:0:4294967295
+          counterA="U"
+          counterB="U"
+
+          oIFS="$IFS"
+IFS="," read -r counterA counterB << EOT
+$value
+EOT
+          IFS="$oIFS"
+
+          nick=DS2423_${addrr}_nickA; eval nick='$'$nick; if [ -z $nick ]; then nick=${addrr}_A; fi
+          collectd_write "count-$nick interval=$SEC_READ_COUNTERS  $time_epoch:$counterA:$counterA"
+          mqtt_write "count-$nick $counterA @$time_epoch"
+
+          nick=DS2423_${addrr}_nickB; eval nick='$'$nick; if [ -z $nick ]; then nick=${addrr}_B; fi
+          collectd_write "count-$nick interval=$SEC_READ_COUNTERS  $time_epoch:$counterB:$counterB"
+	  mqtt_write "count-$nick $counterB @$time_epoch"
+        ;;
+
+      esac
+
+      n=$((n+1))
+    fi
+  done
+
+  echo "read_1w red $n values" | $PROC_LOGGER
+
+  # restart owserver if number of replied chips less then minimum
+  MinChipQty="1"		# at least 1 chip...
+  case "$family$property" in
+    28temperature)
+      MinChipQty="$MIN_QTY_TEMP_CHIPS"
+      ;;
+    12sensed.Byte)
+      MinChipQty="$MIN_QTY_GPIO_CHIPS"
+      ;;
+    1Dcounters.all)
+      MinChipQty="$MIN_QTY_COUN_CHIPS"
+      ;;
+    "[0-9A-Z]{2}type")
+      MinChipQty="$MIN_QTY_CHIPS"
+      ;;
+  esac
+  if [[ "$n" -lt "$MinChipQty" ]]; then
+    restart_ow "found $n chips, expectected at least $MinChipQty"
+  fi
+
+fi
+}
+
+next_run()
+{
+local NEXT=$1
+while [ "`date +%s`" -ge "$NEXT" ]; do
+  NEXT=`expr $NEXT + $2`
+done
+echo $NEXT
+}
+
+## for logging to FIFO pipe (not in use)
+#the_pipe="/tmp/1w_sys_pipe"
+#open_pipe()  {if [[ ! -p $the_pipe ]]; then mkfifo $the_pipe; fi}
+#write_pipe() {open_pipe; if [[ "$1" ]]; then echo "$1" > $the_pipe;fi}
+##add to trap param: "rm -f $the_pipe"
+
+#--- Initialisation
+trap "if [ -f $DATA_BUFFER ]; then cat $DATA_BUFFER >> $DATA_LOG; rm -f $DATA_BUFFER; fi"  TERM EXIT
+# trap ... INT TERM EXIT
+
+# terminate script if another instance already running
+pidof 1w_system_run | grep -E "[0-9]+\ +[0-9]+" > /dev/null
+if [[ $? -eq "0" ]]; then
+ echo "1w_system_run already runninig. exit." | $PROC_LOGGER
+ exit 1
+fi
+
+# --- Init
+
+if ! [ -f $DATA_LOG ]; then touch $DATA_LOG; fi
+if ! [ -f $DATA_BUFFER ]; then touch $DATA_BUFFER; fi
+if ! [ -f $COLLECTD_BUFFER ]; then touch $COLLECTD_BUFFER; fi
+if ! [ -f $COLLECTD_LOG ]; then touch $COLLECTD_LOG; fi
+if ! [ -f $MQTT_BUFFER ]; then touch $MQTT_BUFFER; fi
+
+echo "$0[$$] started" | $PROC_LOGGER
+echo "starting ow server" | $PROC_LOGGER
+$START_OWSERVER | $PROC_LOGGER
+$READ_BUS
+sleep 10
+
+# Variables to keep the time of next read/write cickles
+NOW=`date +%s`
+NEXT_READ_COUNTERS="$NOW"
+NEXT_READ_GPIO="`expr $NOW + 3`"
+NEXT_CTRL_EQP="`expr $NOW + 7`"
+NEXT_READ_TEMP="`expr $NOW + 17`"
+NEXT_READ_HUMIDITY="`expr $NOW + 37`"
+NEXT_READ_BUS="`expr $NOW + 47`"
+NEXT_SAVE_BUFFER="`expr $NOW + $SEC_SAVE_BUFFER`"
+
+# --- End of Init
+
+# --- Main loop
+while true; do
+
+NOW=`date +%s`
+
+if [ $NOW -ge $NEXT_READ_BUS ]; then
+	echo "reading device list on 1w-bus" | $PROC_LOGGER
+	$READ_BUS
+        NEXT_READ_BUS=`next_run $NEXT_READ_BUS $SEC_READ_BUS`
+	NOW=`date +%s`
+fi
+
+if [ $NOW -ge $NEXT_READ_COUNTERS ]; then
+	echo "reading counters" | $PROC_LOGGER
+	$READ_COUNTERS
+        NEXT_READ_COUNTERS=`next_run $NEXT_READ_COUNTERS $SEC_READ_COUNTERS`
+        NOW=`date +%s`
+fi
+
+if [ $NOW -ge $NEXT_READ_GPIO ]; then
+	echo "reading GPIO sensors (3 chip types)" | $PROC_LOGGER
+	$READ_GPIO
+        NEXT_READ_GPIO=`next_run $NEXT_READ_GPIO $SEC_READ_GPIO`
+        NOW=`date +%s`
+fi
+
+# $NEXT_CTRL_EQP
+if [ $NOW -ge $NEXT_CTRL_EQP ]; then
+	echo "calling ventillation system control" | $PROC_LOGGER
+	data=`$CTRL_VENT`
+	echo $data | $DATA_LOGGER
+	echo "calling heat pump control" | $PROC_LOGGER
+	data=`$CTRL_HEAT`
+	echo $data | $DATA_LOGGER
+        NEXT_CTRL_EQP=`next_run $NEXT_CTRL_EQP $SEC_CTRL_EQP`
+        NOW=`date +%s`
+fi
+
+if [ $NOW -ge $NEXT_READ_TEMP ]; then
+        echo "reading temperatures" | $PROC_LOGGER
+        $READ_TEMP
+        NEXT_READ_TEMP=`next_run $NEXT_READ_TEMP $SEC_READ_TEMP`
+        NOW=`date +%s`
+fi
+
+if [ $NOW -ge $NEXT_READ_HUMIDITY ]; then
+        echo "reading humidity" | $PROC_LOGGER
+        $READ_HUMIDITY
+        NEXT_READ_HUMIDITY=`next_run $NEXT_READ_HUMIDITY $SEC_READ_HUMIDITY`
+        NOW=`date +%s`
+fi
+
+# the last block of the main loop:
+sleep 1
+if [ $NOW -ge $NEXT_SAVE_BUFFER ]; then
+	echo "saving data buffer" | $PROC_LOGGER
+	cat $DATA_BUFFER >> $DATA_LOG
+	cat $COLLECTD_BUFFER >> $COLLECTD_LOG
+	# flushing buffer files
+	sleep 2	# give time to other scripts before erasing data buffers
+	if [[ -f $DATA_BUFFER ]]; then echo -n "" > $DATA_BUFFER; fi
+	if [[ -f $COLLECTD_BUFFER ]]; then echo -n "" > $COLLECTD_BUFFER; fi
+	if [[ -f $MQTT_BUFFER ]]; then echo -n "" > $MQTT_BUFFER; fi
+        NEXT_SAVE_BUFFER=`next_run $NEXT_SAVE_BUFFER $SEC_SAVE_BUFFER`
+fi
+# end of the last block
+
+# --- End of Main loop
+done

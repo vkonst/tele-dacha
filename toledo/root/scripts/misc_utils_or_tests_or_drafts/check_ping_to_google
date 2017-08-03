@@ -1,0 +1,17 @@
+#!/bin/ash
+HOSTS="8.8.8.8"
+COUNT=2
+
+for myHost in $HOSTS
+do
+
+	ping -c $COUNT $myHost > /dev/null
+	if [ "$?" -ne 0 ];then
+		echo $myHost down
+		exit 1
+	else 
+		echo $myHost up!
+	fi
+done
+exit 0
+

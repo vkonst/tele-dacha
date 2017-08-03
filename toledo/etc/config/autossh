@@ -1,0 +1,6 @@
+config autossh
+	option ssh	'-p 11122 -i /some_folder/some_key_file -N -g -T -R 11124:localhost:22 username@XXX.XXX.XXX.XXX'
+	option gatetime	'30'
+	option monitorport	'20080'
+	option poll	'600'
+	option first_poll	'120'

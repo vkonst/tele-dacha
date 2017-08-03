@@ -2,10 +2,10 @@
 Bash scripts which collect and monitor environmental/consumption data of a country house for almost 10 years.
 
 ## System overview
-The system comprises a network of ~30 sensors / actuators, a few USB webcams and a few linux boxes which 24x7 monitor/analyze data, trigger event messages and control commands to the actuators. 
+The system comprises a network of ~30 sensors / actuators, a few USB webcams and a few linux boxes which 24x7 monitor/analyze data, trigger event messages and commands to the actuators. 
 
-The main controller for the sensors network - "toledo" host, a chip router running OpenWrt.
-The "palermo" hosts, an old notebook running Debian, processes the data from toledo and webcams and communicates to the world.  
+The main controller for the sensors network is "toledo" host, a cheap D-Link router running OpenWrt. It is capable of controlling sensors / actuators autonomously (i.e. with other hosts and Internet disconnected) or at request of other hosts (i.e. "palermo"). <br />
+The "palermo" hosts, an old EeePc notebook running Debian, processes the data from toledo and webcams and communicates to the world over GSM network.  
 
 #### Sensors and actuators
 ##### Dallas 1-Wire network
@@ -25,8 +25,8 @@ In total, a couple of dozens self-made and self-mounted devices (electrical circ
 #### Hots and software:
 ##### palermo _(alias - vkhome-fi)_
 **the main server**<br />
-An old notebook (EeePc) running Linux.<br />
-Slightly modified (enhanced heat exchange, a circuit added that restarts on power failures).<br />
+An old EeePc notebook running Debian.<br />
+Slightly modified heatsink, a circuit added that "presses" the power-on button on mains power returns.<br />
 
 Running services:<br />
 - rsyslog server
@@ -43,7 +43,8 @@ Running services:<br />
 
 ##### toledo
 **interface to the 1-Wire network**<br>
-A chip router running OpenWRT with attached 1-Wire network adapter.<br />
+A cheap D-Link router running OpenWRT with attached 1-Wire network adapter.<br />
+No hardware modifications made.
 
 Running services:<br />
 - OWFS (One-Wire File System) server
@@ -54,7 +55,8 @@ Running services:<br />
 
 ##### napoli _(alias 1w-server)_
 **network switch and USB cam streamer**<br />
-A chip router running OpenWRT with attached USB Web-cams.<br />
+A cheap D-Link router running OpenWRT with attached USB Web-cams.<br />
+No hardware modifications made.<br />
 
 Running services:<br />
 - mjpeg-streamer server
@@ -63,6 +65,6 @@ Running services:<br />
 - network switch
 
 ##### Remote and cloud servers
-- remote access proxy - provides ssh tunnels
-- cloud MQTT server: re-translate messages from/to rome 
-- rome - collects and logs data via the cloud MQTT server
+- remote (private) access proxy - provides ssh tunnels for webserver@toledo, CCTV streaming and maintenance tasks
+- (free) public cloud MQTT server - re-translates telemetry data from toledo to rome 
+- rome (remote private host) - logs telemetry data via the cloud MQTT server

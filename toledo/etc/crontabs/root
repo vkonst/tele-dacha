@@ -1,0 +1,57 @@
+#time to be defined for GMT time zone (20:12 EEST = 17:12 GMT)
+#min hour day month dayofweek command
+#crontab muss (wie fstab) in leerzeile oder kommentar enden
+#
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/opt/bin:/opt/sbin:/opt/usr/bin:/opt/usr/sbin
+LD_LIBRARY_PATH=/lib:/usr/lib:/tmp/lib:/tmp/usr/lib:/opt/lib:/opt/usr/lib
+#
+9 2 * * * /usr/sbin/delayed_reboot.sh 2>&1                                     
+7,22,37,52 * * * * /etc/init.d/autossh start
+*/20 * * * * /etc/init.d/collectd start
+*/5 * * * * /etc/init.d/1w_system start                                                                                                     
+*/5 * * * * /root/scripts/1w_mqtt_pub.sh 2>&1 &
+23 1 * * * /usr/sbin/logrotate  /etc/logrotate.conf 2>&1                                  
+#
+#
+### Update ventilation system desired status
+##"Empty house" mode: "on" for 15 minutes every 3 hours 
+17 */3 * * * /usr/bin/set_status_ILTO400M.sh on  auto 2>&1
+32 */3 * * * /usr/bin/set_status_ILTO400M.sh off auto 2>&1
+#
+##"Occupied house" mode #1 (winter. daytime activity):
+# "On" for the daytime, 20min/2hrs for the night
+#*/15 5-20   * * * /usr/bin/set_status_ILTO400M.sh on  auto 2>&1
+#*/15 21     * * * /usr/bin/set_status_ILTO400M.sh off auto 2>&1
+#14 0,2,4,22 * * * /usr/bin/set_status_ILTO400M.sh on  auto 2>&1
+#34 0,2,4,22 * * * /usr/bin/set_status_ILTO400M.sh off auto 2>&1
+#
+##"Occupied house" mode #2 (winter. night workers):
+# "15 min/3 hrs" for night, "On" for morning and day
+#29  3 * * * /usr/bin/set_status_ILTO400M.sh on  auto 2>&1
+#44 15 * * * /usr/bin/set_status_ILTO400M.sh off auto 2>&1
+#14 0,18,21 * * * /usr/bin/set_status_ILTO400M.sh  on auto 2>&1
+#29 0,18,21 * * * /usr/bin/set_status_ILTO400M.sh off auto 2>&1
+#
+##"Occupied house" mode #3 (summer. nights "on"):
+# "On" for the nightime, 20min/2hrs for the daytime
+#*/15 20-23,0-5        * * * /usr/bin/set_status_ILTO400M.sh on  auto 2>&1
+#4    6                * * * /usr/bin/set_status_ILTO400M.sh off auto 2>&1
+#14   8,10,12,14,16,18 * * * /usr/bin/set_status_ILTO400M.sh on  auto 2>&1
+#34   8,10,12,14,16,18 * * * /usr/bin/set_status_ILTO400M.sh off auto 2>&1
+#
+#### end of ventillation section
+#
+#### Update desired status of heat pump ("tarif control" or "timer" mode)
+## Lower temperature (lower energy consumption) for day time
+#*/15 21-23,0-4  * * * /bin/echo "off" > /tmp/heat_pump_timer_mode.status 2>&1
+#*/15 5-20       * * * /bin/echo "on"  > /tmp/heat_pump_timer_mode.status 2>&1
+## Lower temperature (energy consumption) for nigh time
+#*/15 21-23,0-4  * * * /bin/echo "on"  > /tmp/heat_pump_timer_mode.status 2>&1
+#*/15 5-20       * * * /bin/echo "off" > /tmp/heat_pump_timer_mode.status 2>&1
+#### end of heat pump section
+#
+#*/10 * * * * /usr/bin/take_webcam_snapshot  2>&1
+# 1,11,21,31,41,51 * * * * /usr/bin/send_snapshot_to_timeweb  >> /home/log/webcam.log 2>&1
+# 59 23 * * * /usr/bin/midnight.sh 2>&1                                                   
+#
+07 18 * * 2 /usr/bin/crontab -l > /root/scripts/crontab.bak 2>&1

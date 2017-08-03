@@ -1,0 +1,22 @@
+#!/bin/sh
+
+LOGGER="/usr/bin/logger -t take_webcam_snapshot[$$]"
+
+# echo -n "`date` take_webcam_snapshot == "
+fpath="/home/webcam/"
+fname=snap-`date +%Y%m%d-%H%M%S`.jpg
+theLabel=$fname
+lname='lastsnap.jpg'
+
+# try to get the webcam snapshot
+wget http://192.168.XXX.XX4:8080/?action=snapshot -O $fpath$fname -q
+
+if [ "$?" -eq "0" ]
+then
+	echo "$fpath$fname downloaded. Ok." | $LOGGER
+#	convert $fpath$fname -gravity South   -fill white  -undercolor '#00000080' -font /usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf -pointsize 24 -annotate +0+0 $theLabel $fpath$fname
+#	ln -f -s $fpath$fname $fpath$lname
+	cp -f $fpath$fname $fpath$lname
+else
+	echo "Failed to download snapshot. Error." | $LOGGER
+fi

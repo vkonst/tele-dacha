@@ -1,0 +1,15 @@
+#!/bin/sh
+
+param="sensed.Byte"
+
+chips=`owdir | grep "\/12\."`
+
+if ! [ $? -eq 0 ]; then
+	exit 1
+fi
+	
+for chip in $chips
+	do echo "`date` ; read ; $chip ; $param ; `owread $chip/$param` ; ($?)"
+done
+
+

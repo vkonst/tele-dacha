@@ -1,0 +1,21 @@
+#!/bin/ash
+# file: /root/scripts/exec_init-toledo-1w_sys
+# Script for the exec plugin (collectd-exec(5))
+
+# file to read pre-formated data from:
+the_pipe="/home/gpio.processed"
+
+HOSTNAME="${COLLECTD_HOSTNAME:-toledo}"
+
+while true; do
+  if [[ -f $the_pipe ]]; then
+     cat $the_pipe | \
+     while read -r line; do
+       if [[ "$line" ]]; then 
+        echo "PUTVAL $HOSTNAME/$line"
+       fi
+       /usr/bin/usleep 0.4
+     done
+  fi
+  sleep 30
+done

@@ -1,0 +1,4 @@
+/home/log/syslog.log {
+        size 100k
+}
+

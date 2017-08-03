@@ -1,0 +1,146 @@
+Package: autossh; Conffiles: /etc/config/autossh
+Package: base-files; Conffiles:  /etc/hosts /etc/group /etc/passwd /etc/shadow /etc/profile /etc/shells /etc/sysctl.conf /etc/rc.local /etc/sysupgrade.conf /etc/config/system /etc/config/network
+Package: blkid
+Package: block-mount; Conffiles:  /etc/config/fstab
+Package: busybox
+Package: cfdisk
+Package: collectd; Conffiles: /opt/etc/collectd.conf
+Package: collectd-mod-cpu
+Package: collectd-mod-df
+Package: collectd-mod-disk
+Package: collectd-mod-exec
+Package: collectd-mod-load
+Package: collectd-mod-memory
+Package: collectd-mod-network
+Package: collectd-mod-ping
+Package: collectd-mod-processes
+Package: collectd-mod-syslog
+Package: coreutils
+Package: coreutils-sleep
+Package: dnsmasq; Conffiles: /etc/config/dhcp /etc/dnsmasq.conf
+Package: dropbear Conffiles: /etc/dropbear/dropbear_rsa_host_key /etc/dropbear/dropbear_dss_host_key /etc/config/dropbear
+Package: e2fsprogs
+Package: fconfig
+Package: fdisk
+Package: firewall; Conffiles: /etc/config/firewall /etc/firewall.user
+Package: fuse-utils
+Package: glib2
+Package: hotplug2; Conffiles: /etc/hotplug2.rules
+Package: iptables
+Package: iw
+Package: ixp4xx-microcode
+Package: jshn
+Package: kernel
+Package: kmod-ath
+Package: kmod-ath5k
+Package: kmod-cfg80211
+Package: kmod-crypto-aes
+Package: kmod-crypto-arc4
+Package: kmod-crypto-core
+Package: kmod-fs-ext4
+Package: kmod-fuse
+Package: kmod-i2c-core
+Package: kmod-input-core
+Package: kmod-ipt-conntrack
+Package: kmod-ipt-core
+Package: kmod-ipt-nat
+Package: kmod-ipt-nathelper
+Package: kmod-lib-crc-ccitt
+Package: kmod-lib-crc16
+Package: kmod-mac80211
+Package: kmod-nls-base
+Package: kmod-ppp
+Package: kmod-pppoe
+Package: kmod-pppox
+Package: kmod-scsi-core
+Package: kmod-scsi-generic
+Package: kmod-usb-core
+Package: kmod-usb-ohci
+Package: kmod-usb-serial
+Package: kmod-usb-serial-pl2303
+Package: kmod-usb-storage
+Package: kmod-usb-uhci
+Package: kmod-usb2
+Package: kmod-video-core
+Package: kmod-video-uvc
+Package: kmod-video-videobuf2
+Package: libblkid
+Package: libblobmsg-json
+Package: libc
+Package: libcom_err
+Package: libext2fs
+Package: libfuse
+Package: libgcc
+Package: libip4tc
+Package: libiwinfo
+Package: libiwinfo-lua
+Package: libjpeg
+Package: libjson
+Package: libltdl
+Package: liblua
+Package: libmosquitto
+Package: libncurses
+Package: libnl-tiny
+Package: liboping
+Package: libow
+Package: libpcre
+Package: libpopt
+Package: libpthread
+Package: librpc
+Package: librt
+Package: libubox
+Package: libubus
+Package: libubus-lua
+Package: libuci
+Package: libuci-lua
+Package: libusb
+Package: libusb-1.0
+Package: libuuid
+Package: libv4l
+Package: libxml2
+Package: libxtables
+Package: logrotate; Conffiles: /opt/etc/logrotate.conf
+Package: lua
+Package: luci
+Package: luci-app-firewall
+Package: luci-i18n-english
+Package: luci-lib-core
+Package: luci-lib-ipkg
+Package: luci-lib-nixio
+Package: luci-lib-sys
+Package: luci-lib-web; Conffiles: /etc/config/luci
+Package: luci-mod-admin-core
+Package: luci-mod-admin-full
+Package: luci-proto-core
+Package: luci-proto-ppp
+Package: luci-sgi-cgi
+Package: luci-theme-base
+Package: luci-theme-openwrt
+Package: mc; Conffiles: /opt/etc/mc/mc.menu /opt/etc/mc/skins/default.ini
+Package: mjpg-streamer; Conffiles: /opt/etc/config/mjpg-streamer
+Package: mosquitto-client
+Package: mtd
+Package: nano
+Package: netifd
+Package: opkg; Conffiles: /etc/opkg.conf
+Package: owfs
+Package: owserver
+Package: owshell
+Package: php5; Conffiles: /opt/etc/php.ini
+Package: php5-cgi
+Package: ppp; Conffiles: /etc/ppp/chap-secrets /etc/ppp/filter /etc/ppp/options
+Package: ppp-mod-pppoe
+Package: rsync
+Package: screen; Conffiles: /opt/etc/screenrc
+Package: swap-utils
+Package: terminfo
+Package: ubus
+Package: ubusd
+Package: uci
+Package: uclibcxx
+Package: uhttpd; Conffiles: /etc/config/uhttpd
+Package: usbutils
+Package: v4l-utils
+Package: wpad-mini
+Package: wput
+Package: zlib

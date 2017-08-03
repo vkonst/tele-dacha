@@ -1,0 +1,6 @@
+/home/1w/1w_collectd.log {
+        weekly
+        rotate 4
+        size 300k
+}
+

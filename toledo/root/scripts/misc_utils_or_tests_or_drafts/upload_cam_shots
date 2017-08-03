@@ -1,0 +1,16 @@
+#!/bin/sh
+# script unde construction ...
+# Hack version
+
+LD_LIBRARY_PATH='/lib:/usr/lib:/tmp/lib:/tmp/usr/lib:/opt/lib:/opt/usr/lib'
+PATH='/bin:/sbin:/usr/bin:/usr/sbin:/opt/bin:/opt/sbin:/opt/usr/bin:/opt/usr/sbin'
+
+ldir="/home/webcam/"
+rdir="/home/username/motion/"
+id="username@remote.server"
+
+echo "`date` $0"
+
+/opt/usr/bin/rsync $ldir $id:$rdir -rtLv -e "/usr/bin/ssh -i /root/.ssh/some_key_file"
+
+echo result $?

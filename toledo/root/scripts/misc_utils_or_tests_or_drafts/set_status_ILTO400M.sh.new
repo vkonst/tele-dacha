@@ -1,0 +1,88 @@
+#!/bin/sh
+
+# Set the desired state (on|off) for ILTO 400M.
+# See usage bellow
+
+STATUS_FILE="/tmp/ILTO400M.status"
+
+#time in seconds when "manual" mode is switched to "auto" mode (3 days)
+TIMEOUT=259200
+
+write_status() {
+  (echo `date`; NOW=`date +%s`; echo expired=`expr $NOW + $TIMEOUT`; echo "mode=$1"; echo state="$2") > $STATUS_FILE
+}
+
+if [ -f $STATUS_FILE ]; then
+	mode=$(cat $STATUS_FILE | sed -n 's/.\?mode\ \?=\ \?\(manual\|auto\)/\1/p')
+        state=$(cat $STATUS_FILE | sed -n 's/.\?state\ \?=\ \?\(on\|off\)/\1/p')
+	expired=$(cat $STATUS_FILE | sed -n 's/.\?expired\ \?=\ \?\([0-9]+)/\1/p')
+else
+        echo "Error: can't read $STATUS_FILE. does it exist?" >&2
+        exit 1
+fi
+
+is_expired() {
+	if [ "`date +%s`" -ge "$expired" ]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+case "$1$2" in
+	"on"|"onauto|autoon")
+	if ! [ "$mode" = "manual" ]; then
+        	write_status auto on
+	fi
+	;;
+
+	off|offauto|autooff)
+        if ! [ "$mode" = "manual" ]; then
+                write_status auto off
+        fi
+	;;
+
+        onmanual|manualon)
+		write_status manual on
+        ;;
+
+        offmanual|manualoff)
+        	write_status manual off
+        ;;
+
+	switchauto|autoswitch)
+	        write_status auto ${state}
+        ;;
+
+        switchmanual|manualswitch)
+                write_status manual ${state}
+        ;;
+
+        switch)
+		if ! [ "$mode" = "manual" ]; then
+                	write_status auto ${state}
+		else
+			write_status manual ${state}
+         	fi
+        ;;
+
+	check)
+		if ! [ "$mode" = "manual" ]; then
+			if (is_expired); then
+				write_status auto ${state}
+			fi
+		fi
+
+	*)
+	(echo "Usage: set_status_ILT400M.sh on|off|switch [auto|manual]"
+	 echo "\"manual\" has higher priority and it always overwrites the state."
+	 echo "\"auto\" cann't reset the state if it was set in \"manual\" mode."
+	 echo "\"switch\" sets the mode keeping the state."
+	 echo "Use cron daemon or other scripts to call this scripts."
+	 echo "GMT time is 2 hrs (7200s) behind the local time."
+	) >&2
+	result="1"
+	;;
+
+esac
+exit $result

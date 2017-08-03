@@ -1,0 +1,89 @@
+###
+# List of known DS one-wire sensors and switches for 1w_system
+#
+# Format:
+# <chip_type>_<chip_address>_<param>=<value>
+#
+# chip_type: DS18B20|DS2405|DS2406|DS2423|DS2413
+# chip_address: 12 char address in owfs
+#
+# example: DS18B20_522630010000_nick=central_room
+# for temperature sensors DS18B20 (owfs family code - 28)
+# + with owfs address 28.522630010000 installed in "central room"
+#
+# Recognized params:
+# nick - nickname for a channel (of single channel chips)
+# nickA, nickB - nicknames for channels A and B (of dual channel chips)
+# nickname: up to 19 chars, allowed caharacters: a-z,A-Z,0-9,"_"
+# + by default - 12 char address in owfs (example - "522630010000")
+# + nickname used as collectd instance name and mqtt subtopic name (if enabled)
+###
+
+### DS18B20 - single channel temperature sensors
+#   28 - owfs family code
+DS18B20_22XXXXXXXXXX_nick=guestroom
+DS18B20_9FXXXXXXXXXX_nick=bedroom
+DS18B20_A7XXXXXXXXXX_nick=ilia_room
+DS18B20_0FXXXXXXXXXX_nick=maria_room
+DS18B20_52XXXXXXXXXX_nick=central_room
+DS18B20_92XXXXXXXXXX_nick=main_signalboard
+DS18B20_DCXXXXXXXXXX_nick=heat_rdside_supply
+DS18B20_6AXXXXXXXXXX_nick=heat_rdside_supply
+DS18B20_5AXXXXXXXXXX_nick=heat_maria_room
+DS18B20_919XXXXXXXXX_nick=heat_iliya_room
+DS18B20_4BXXXXXXXXXX_nick=heat_entrance_hall
+DS18B20_9BXXXXXXXXXX_nick=heat_guest_room
+DS18B20_A4XXXXXXXXXX_nick=outdoor
+DS18B20_20XXXXXXXXXX_nick=underfloor
+DS18B20_911XXXXXXXXX_nick=hpump_brine_in
+DS18B20_C6XXXXXXXXXX_nick=hpump_brine_out
+DS18B20_B0XXXXXXXXXX_nick=hpump_hotwater
+DS18B20_34XXXXXXXXXX_nick=hpump_heat_return
+DS18B20_EBXXXXXXXXXX_nick=hpump_heat_supply
+DS18B20_D0XXXXXXXXXX_nick=heat_bedroom
+DS18B20_F0XXXXXXXXXX_nick=heat_centralroom_l
+DS18B20_E8XXXXXXXXXX_nick=heat_lkside_supply
+DS18B20_F1XXXXXXXXXX_nick=heat_centralroom_r
+DS18B20_8DXXXXXXXXXX_nick=heat_sauna_zone
+
+### DS2406 - dual channel digital GPIO sensors
+#   12 - owfs family code
+DS2406_ECXXXXXXXXXX_nickA=entr_room_heating
+DS2406_ECXXXXXXXXXX_nickB=maria_room_heating
+DS2406_6BAXXXXXXXXX_nickA=guest_room_heating
+DS2406_6BAXXXXXXXXX_nickB=iliya_room_heating
+DS2406_6BBXXXXXXXXX_nickA=hpump_heating_circ
+DS2406_6BBXXXXXXXXX_nickB=hpump_brine_circ
+DS2406_E7XXXXXXXXXX_nickA=E7XXXX_a
+DS2406_E7XXXXXXXXXX_nickB=E7XXXX_b
+
+### DS2423 - dual channel counters
+#   1D - owfs family code
+DS2423_XDXXXXXXXXXX_nickA=entrance_doors
+DS2423_XDXXXXXXXXXX_nickB=indoor_ir_sensor
+DS2423_XFXXXXXXXXXX_nickA=XFXXXX_a
+DS2423_XFXXXXXXXXXX_nickB=water_meter
+
+### DS2413 - dual channel digital GPIO
+#   3A - owfs family code
+DS2413_66XXXXXXXXXX_nickA=hpump_timer_switch
+DS2413_66XXXXXXXXXX_nickB=66XXXX_switch
+DS2413_50XXXXXXXXXX_nickA=50XXXX_a
+DS2413_50XXXXXXXXXX_nickB=50XXXX_b
+DS2413_8DXXXXXXXXXX_nickA=8DXXXX_a
+DS2413_8DXXXXXXXXXX_nickB=8DXXXX_b
+#
+# Heat Pump keyboard (separately controlled)
+# DS2413_XXX4XXXXXXXX
+# DS2413_XXXAXXXXXXXX
+
+### DS2405 - single channel digital GPIO
+#   05 - owfs family code
+DS2405_2EXXXXXXXXXX_nickA=ventillation_switch
+
+### DS2438 - single channel ADC
+#   26 - owfs family code
+# HIH-4000 humidity sensors:
+DS2438_37XXXXXXXXXX_nick=underfloor_2
+# ... humidity sensors:
+DS2438_2EXXXXXXXXXX_nick=central_room

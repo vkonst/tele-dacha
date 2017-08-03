@@ -1,0 +1,100 @@
+#!/bin/sh
+
+LD_LIBRARY_PATH='/lib:/usr/lib:/tmp/lib:/tmp/usr/lib:/opt/lib:/opt/usr/lib'
+PATH='/bin:/sbin:/usr/bin:/usr/sbin:/opt/bin:/opt/sbin:/opt/usr/bin:/opt/usr/sbin'
+
+# CONFFILE=/etc/config/owfs.conf
+DESC="Home automation Server"
+NAME="1w_system_run"
+DAEMON=/usr/bin/$NAME
+# PIDDIR=/var/run
+# PIDFILE=$PIDDIR/$NAME.pid
+
+# Gracefully exit if the daemon has been removed.
+test -x $DAEMON || exit 0
+
+d_start() {
+#    [ -d $PIDDIR ] || {
+#    mkdir -m 0775 -p $PIDDIR
+#    chown root:root $PIDDIR >/dev/null 2>&1
+#    }
+    start-stop-daemon -S -b -x $DAEMON -n $NAME --
+#   start-stop-daemon -S -x $DAEMON -p $PIDFILE -m -- -c $CONFFILE
+}
+
+d_stop() {
+    start-stop-daemon -K -n $NAME -s KILL
+#    if [ -f $PIDFILE ]; then
+#	d_status
+#	if [ $? -eq 0 ]; then
+#	  # Daemon still running
+#	  return 1
+#    	else
+#          # Stale PID file (owserver was successfilly stoped),
+#          #remove it
+#          rm -f $PIDFILE
+#	fi
+#    fi
+}
+
+d_status() {
+    start-stop-daemon -K -q -t -n $NAME
+}
+
+
+log_end_msg() {
+        if [ $1 -eq 0 ]; then
+	  echo "Success"	
+          exit 0
+        else
+	  echo "Failed"
+	  exit 1
+        fi
+}
+
+# /usr/bin/logger -t "init.d/1w_system" "$0 $1"
+
+case "$1" in
+    start|boot)
+#        log_daemon_msg "Starting $DESC" "$NAME"
+	echo "Starting $DESC" "$NAME"
+	d_status
+	if [ $? -eq 0 ]; then
+		echo "$NAME is already running"
+		log_end_msg 1
+	else
+        	d_start
+        	log_end_msg $?
+	fi
+        ;;
+    stop)
+#        log_daemon_msg "Stopping $DESC" "$NAME"
+	echo "Stopping $DESC" "$NAME"
+        d_stop
+        log_end_msg $?
+        ;;
+    restart|force-reload)
+#        log_daemon_msg "Restarting $DESC" "$NAME"
+	echo "Restarting $DESC" "$NAME"
+        d_status && d_stop
+        d_start
+        log_end_msg $?
+       ;;
+    status)
+        d_status
+        if [ $? -eq 0 ];then
+#            log_success_msg "$NAME is running"
+	echo "$NAME is running"
+        else
+#            log_failure_msg "$NAME is not running"
+	echo "$NAME is not running"
+	exit 1
+        fi
+        ;;
+    *)
+        echo "Usage: /etc/init.d/$NAME {start|stop|restart|force-reload|status}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0

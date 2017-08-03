@@ -1,0 +1,18 @@
+#!/bin/sh
+
+echo "=== `date` === send_snapshot_to_timeweb"
+
+# /usr/bin/take_webcam_snapshot.sh
+#tag=`date +%u%H%M`
+
+fname=`ls /home/webcam/lastsnap.jpg -1`
+
+if [ "$?" -eq "0" ]
+then
+	# echo $fname
+	/usr/bin/send_file_to_timeweb $fname vkhome-ru-cam3.jpg
+else
+	# echo $fname
+	echo nothing to send
+fi
+

@@ -1,0 +1,23 @@
+The relative humidity:
+RH_raw=161.29*(VAD/VDD-25.80) # 25.8??? by HONEYWELL data sheet: VAD=VDD(0.0062(RH)+0.16)
+RH_true=RH_raw/(1.0546-0.00216*Tc)
+
+example:
+23.81, 3.17, 5.03 - temperature in degrees C (TC), the voltage on the VAD input and the supply voltage (VDD)
+RH_raw = 161.29 * 3.17 / 5.03 - 25.80 = 75.8 percent
+RH_true = 75.8 / (1.0546 - 0.00216 * 23.81) = 75.6 percent
+
+TC=15.5, VAD=0.78, VDD=5.03, RH_raw
+TC=11.4, VAD=3.72, VDD=5.03, 
+
+VAD=0.78 ; VDD=5.03 ; echo "scale=3; ($VAD/$VDD-0.16)/0.0062" | bc
+-.806
+VAD=3.72 ; VDD=5.03 ; echo "scale=3; ($VAD/$VDD-0.16)/0.0062" | bc
+93.387
+
+options:
+($VAD/$VDD-0.16)/0.0062
+($VAD/$VDD-0.8/$VDD)/0.0062
+($VAD/$VDD-0.8/$VDD)/(0.0062*(1.0546-0.00216*$TC))
+($VAD/$VDD-0.8/$VDD)/(0.0062*(1.0546-0.00216*$TC))
+

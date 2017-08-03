@@ -1,0 +1,6 @@
+/home/1w/sensor_readings.log {
+        weekly
+        rotate 14
+        size 300k
+}
+

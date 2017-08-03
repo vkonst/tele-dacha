@@ -1,0 +1,19 @@
+#!/bin/sh
+# script unde construction ...
+# Hack version
+
+LOGGER="/usr/bin/logger -t upload_1w_files[$$]"
+
+LD_LIBRARY_PATH='/lib:/usr/lib:/tmp/lib:/tmp/usr/lib:/opt/lib:/opt/usr/lib'
+PATH='/bin:/sbin:/usr/bin:/usr/sbin:/opt/bin:/opt/sbin:/opt/usr/bin:/opt/usr/sbin'
+
+ldir="/home/1w/"
+rdir="/home/username/vkhome-fi_1w/"
+id="username@remote.server"
+
+echo "started" | $LOGGER
+
+/usr/bin/rsync $ldir $id:$rdir -rtLv -e "/usr/bin/ssh -i /root/.ssh/some_key_file" | \
+/usr/bin/tail -n 2 | $LOGGER
+
+echo "ended with result $?" | $LOGGER

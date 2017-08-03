@@ -1,0 +1,21 @@
+#!/bin/sh
+
+chip=`owdir | grep "\/05\."`
+echo "`date` using $chip 1W address for ILTO 400M control"
+
+while true
+do
+	echo -n "`date` turn ILTO 400M on  "
+	owwrite $chip/PIO 1
+	echo "($?)"
+
+	sleep 1800
+
+	echo -n "`date` turn ILTO 400M off "
+	owwrite $chip/PIO 0
+	echo "($?)"
+
+	sleep 7200
+
+done
+

@@ -1,0 +1,50 @@
+#!/bin/ash
+#
+# file: /etc/rc.opt.local
+# Put your custom commands here that should be executed once after the folder "/opt" is mounted.
+
+#LOGGER="logger -t \"`basename $0`[$$]\" $@"
+LOGGER="echo `basename $0`[$$]:"
+
+$LOGGER started
+# wait untill /opt is mounted
+while ! test -d /opt/usr; do sleep 30; done
+
+$LOGGER "opt mounted"
+
+PATH="${PATH:-/bin:/sbin:/usr/bin:/usr/sbin}"
+if ( ! echo "${PATH}" | grep opt > /dev/null 2>&1 ) && ( test -d /opt/usr/bin ); then
+  PATH="${PATH}:/opt/bin:/opt/sbin:/opt/usr/bin:/opt/usr/sbin"
+  export PATH
+  $LOGGER 'PATH corrected'
+fi
+
+LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-/lib:/usr/lib:/tmp/lib:/tmp/usr/lib}"
+if ( ! echo "${LD_LIBRARY_PATH}" | grep opt > /dev/null 2>&1 ) && ( test -d /opt/usr/lib ); then
+ LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/opt/lib:/opt/usr/lib"
+ export LD_LIBRARY_PATH
+ $LOGGER 'LD_LIBRARY_PATH corrected'
+fi
+
+#/usr/bin/env > /tmp/env.lst
+
+$LOGGER '/etc/init.d/1w_system start'
+/etc/init.d/1w_system start
+
+$LOGGER '/etc/init.d/collectd start'
+/etc/init.d/collectd start
+# rcS (sysinit) starts collectd incorrectly (when opt unmounted)
+
+$LOGGER calling run_mqtt_monitors in background
+/root/scripts/run_mqtt_monitors.sh /dev/null 2>&1 &
+
+$LOGGER calling 1w_mqtt_pub in background
+/root/scripts/1w_mqtt_pub.sh > /dev/null 2>&1 &
+
+# NB:
+# autossh started by rcS (sysinit) and by hotplug.d
+# owserver started by 1w_system
+
+$LOGGER completed
+
+exit 0

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+chips=`owdir | grep -E "\/[0-9A-Z]{2}\."`
+
+if [ $? -eq 0 ]; then
+	echo "Devices found on 1w-bus"
+	exit 0
+else
+	echo "No devices found on 1w-bus"
+	exit 1
+fi
+
+

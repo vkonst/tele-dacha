@@ -1,0 +1,45 @@
+#!/bin/ash
+# file: /root/scripts/exec-toledo-1w_sys
+# Script for the exec plugin (collectd-exec(5))
+# It reads pre-formatted data from $the_pipe
+# +and passes it to STDOUT for collectd
+
+# file to read pre-formated data from:
+the_pipe="/tmp/1w_collectd.log"
+
+# $the_pipe may be eather a named pipe or a regular file
+# uncomment (comment out) apropriate blocks bellow
+
+HOSTNAME="${COLLECTD_HOSTNAME:-toledo}"
+
+trap "rm -f $the_pipe; exit" INT TERM EXIT
+
+while true; do
+
+## block for named pipe only
+#if [[ -p $the_pipe ]]; then
+#  if read -r line < $the_pipe; then
+#    echo "PUTVAL $HOSTNAME/$line"
+#  fi
+#else
+#  if [[ -f $the_pipe ]]; then rm -f $the_pipe; fi
+#  mkfifo $the_pipe
+#fi
+## end of block
+
+## block for regular file
+  if [[ -f $the_pipe ]]; then
+     tail -f $the_pipe | \
+     while read -r line; do
+       if [[ "$line" ]]; then 
+        echo "PUTVAL $HOSTNAME/$line"
+       fi
+     done
+  else
+    if [[ -p $the_pipe ]]; then rm -f $the_pipe; fi
+    touch $the_pipe
+  fi
+## end of block
+
+  sleep 1
+done
