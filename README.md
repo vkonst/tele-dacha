@@ -1,6 +1,9 @@
 # tele-dacha
 Scripts which collect and monitor environmental/consumption data of a country house for almost 10 years.<br />
+<br />
 _Intentionally written in Bash (mostly in old "Busybox" dialect) to run it on cheap boxes/routers, well before the node.js overcame the world._<br />
+![alt text](https://github.com/vkonst/tele-dacha/blob/master/assets/imgs/water_meter.jpg)
+<br />
 
 ## System overview
 The system comprises a network of ~30 sensors / actuators, a few USB webcams and a few linux boxes which 24x7 monitor/analyze data, trigger event messages and commands to the actuators. 
@@ -9,6 +12,9 @@ The main controller for the sensors network is "toledo" host, a cheap D-Link rou
 The "palermo" hosts, an old EeePc notebook running Debian, processes the data from toledo and webcams and communicates to the world over GSM network.  
 
 #### Sensors and actuators
+![alt text](https://github.com/vkonst/tele-dacha/blob/master/assets/imgs/heat_distribution_valves.JPG)
+<br />
+
 ##### Dallas 1-Wire network
 - Temperature sensors in rooms
 - Temperature sensors on heat supply and return lines
@@ -21,13 +27,15 @@ The "palermo" hosts, an old EeePc notebook running Debian, processes the data fr
 - Counters on the Water-meter and Electricity-meter
 - undisclosed security sensors
 <br />
-In total, a couple of dozens self-made and self-mounted devices (electrical circuits) which incorporates ~thirty 1-Wire chips. Plus a few hundred meters of cat5 cable that connects these circuits all over the house..
+In total, a couple of dozens self-made and self-mounted devices (electrical circuits) which incorporates ~thirty 1-Wire chips. Plus a few hundred meters of cat5 cable that connects these circuits all over the house.
 
 #### Hots and software:
 ##### palermo _(alias - vkhome-fi)_
 **the main server**<br />
 An old EeePc notebook running Debian.<br />
 Slightly modified heatsink, a circuit added that "presses" the power-on button on mains power returns.<br />
+![alt text](https://github.com/vkonst/tele-dacha/blob/master/assets/imgs/palermo_host.jpg)
+<br />
 
 Running services:<br />
 - rsyslog server
