@@ -1,7 +1,9 @@
 # tele-dacha
 Scripts which collect and monitor environmental/consumption data of a country house for almost 10 years.<br />
 <br />
-_Intentionally **written in Bash** ("old fashion" busybox dialect), with minimal support of external libs, to run it on any cheap "busyboxes" (re-programmed routers)._ 
+_Intentionally **written in Bash** ("old fashion" busybox dialect), with minimal support of external libs, to run it on any cheap "busyboxes" (re-programmed routers)._
+<br />
+![alt text](https://github.com/vkonst/tele-dacha/blob/master/assets/imgs/water_meter.jpg)
 <br />
 
 ## System overview
