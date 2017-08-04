@@ -2,8 +2,6 @@ etc/mqtt/mqtt.conf
 etc/rc.local
 etc/sudoers.d/_username_
 home/backup/toledo/backup.sh
-home/_username_/.bash_aliases
-home/_username_/.bashrc
 home/_username_/usb_cam_notes.txt
 home/_username_/scripts/backup.sh
 home/_username_/scripts/create_pid_or_exit_on_existing_pid.sh
@@ -14,7 +12,6 @@ home/_username_/scripts/email_1wsys_report.sh
 home/_username_/scripts/fill-in-toledo-1w_sys-rrd
 home/_username_/scripts/hipchat_send.sh
 home/_username_/scripts/list_usb_devices
-home/_username_/scripts/load_24hrs_foreca-fi_forecats_graph.save
 home/_username_/scripts/load_24hrs_forecast_from_foreca-fi
 home/_username_/scripts/midnight.sh
 home/_username_/scripts/mjpg-streamer_start
@@ -36,7 +33,6 @@ home/_username_/scripts/4motion/send_re3m_status_sms.sh
 home/_username_/scripts/misc/crontab._username_
 home/_username_/scripts/misc/crontab.root
 home/_username_/scripts/mqtt.d/entrance_door.sh
-home/_username_/scripts/mqtt.d/entrance_door.sh.save
 home/_username_/scripts/mqtt.d/heat_pump.sh
 home/_username_/scripts/mqtt.d/indoor_irsensor.sh
 home/_username_/scripts/mqtt.d/toledo-mqtt-repub.sh
@@ -79,4 +75,3 @@ var/www/water/help_blue.png
 var/www/water/index.html
 var/www/water/WaterMeter.css
 var/www/water/waterMeter.js
-
