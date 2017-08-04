@@ -1,8 +1,7 @@
 # tele-dacha
 Scripts which collect and monitor environmental/consumption data of a country house for almost 10 years.<br />
 <br />
-_Intentionally written in Bash (mostly in old "Busybox" dialect) to run it on cheap boxes/routers, well before the node.js overcame the world._<br />
-![alt text](https://github.com/vkonst/tele-dacha/blob/master/assets/imgs/water_meter.jpg)
+_Intentionally **written in Bash** ("old fashion" busybox dialect), with minimal support of external libs, to run it on any cheap "busyboxes" (re-programmed routers)._ 
 <br />
 
 ## System overview
@@ -27,7 +26,7 @@ The "palermo" hosts, an old EeePc notebook running Debian, processes the data fr
 - Counters on the Water-meter and Electricity-meter
 - undisclosed security sensors
 <br />
-In total, a couple of dozens self-made and self-mounted devices (electrical circuits) which incorporates ~thirty 1-Wire chips. Plus a few hundred meters of cat5 cable that connects these circuits all over the house.
+In total, a couple of dozens self-made and self-mounted devices (electrical circuits) which incorporates ~thirty 1-Wire chips. Plus [a few hundred meters of cat5 cable](tele-dacha/assets/imgs/wiring scheme.pdf) that connects these circuits all over the house.
 
 #### Hots and software:
 ##### palermo _(alias - vkhome-fi)_
