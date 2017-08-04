@@ -1,0 +1,14 @@
+#!/bin/sh
+# script under construction ...
+# Hack version
+
+ldir="/tmp/motion/"
+rdir="/home/_username_/motion/"
+id="_username_@XXX.XXX.XXX.XXX"
+
+echo "`date` $0"
+
+/usr/bin/rsync $ldir $id:$rdir -rtLv -e "/usr/bin/ssh -i /home/_username_/.ssh/some_key_file"
+
+echo result $?
+

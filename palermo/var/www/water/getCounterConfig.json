@@ -1,0 +1,1 @@
+{ "chip": "count-water_meter", "time":1436739611, "offset":446.4136, "scale":162882, "notes":"the counter (chip) was reset on Mon Jul 13 01:20:11 EEST 2015 when the meter was at 446.4136 m3. Scale stated in impulses per cubic meter." }

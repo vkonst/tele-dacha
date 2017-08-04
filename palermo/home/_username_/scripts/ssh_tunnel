@@ -1,0 +1,53 @@
+#!/bin/sh
+# Script to start up tunnel with autossh.
+# This script will tunnel LOCALPORT from the local host
+# to port FORWARDEDPORT on REMOTEHOST as user REMOTEID
+# root previlages needed (to reassign port 22)
+
+LOGGER="/usr/bin/logger -t ssh_tunnel[$$]"
+
+REMOTEID='username'
+REMOTEHOST='XXX.XXX.XXX.XXX'
+REMOTEPORT=remote_port
+FORWARDEDPORT=remote_port
+LOCALPORT='22'
+IDENTITY='/home/_username_/.ssh/some_key_file'
+OPTIONS='-L remote_port:localhost:remote_port -o ServerAliveInterval=10 -o ConnectTimeout=60'
+
+AUTOSSH_POLL=600
+AUTOSSH_PORT=20075
+AUTOSSH_GATETIME=30
+AUTOSSH_DEBUG='yes'
+AUTOSSH_PATH='/usr/bin/ssh'
+
+# check if autossh is running and restart if not
+
+if pidof autossh; then
+        # autossh is running
+
+        netstat -nt | grep  "$REMOTEHOST" | grep "ESTABLISHED"
+        if [ "$?" -eq "0" ]; then
+        # connection established
+                 RESULT="ESTABLISHED"
+        else
+                RESULT="DOWN"
+        fi
+        echo "autossh is running. connection is $RESULT" | $LOGGER
+
+else
+	echo -n "autossh is not running. " |  $LOGGER
+	export AUTOSSH_POLL AUTOSSH_DEBUG AUTOSSH_PATH AUTOSSH_GATETIME AUTOSSH_PORT
+
+	/usr/bin/autossh -p $REMOTEPORT -i $IDENTITY -Ngf -R $FORWARDEDPORT:localhost:$LOCALPORT $OPTIONS $REMOTEID@$REMOTEHOST
+
+	# connection established?
+	sleep 10
+	netstat -nt | grep "$REMOTEHOST" | grep "ESTABLISHED"
+	if [ "$?" -eq "0" ]; then
+		RESULT="ESTABLISHED"
+	else
+		RESULT="DOWN"
+	fi
+	echo "autossh restarted. connection is $RESULT." | $LOGGER
+fi
+

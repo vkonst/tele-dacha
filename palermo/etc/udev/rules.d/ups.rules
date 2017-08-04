@@ -1,0 +1,2 @@
+# Server UPS
+KERNEL=="hiddev*", ATTRS{manufacturer}=="American Power Conversion", ATTRS{serial}=="4B0803P73273  ", OWNER="root", SYMLINK+="usb/ups-server"

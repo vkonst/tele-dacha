@@ -6,7 +6,7 @@ LD_LIBRARY_PATH='/lib:/usr/lib:/tmp/lib:/tmp/usr/lib:/opt/lib:/opt/usr/lib'
 PATH='/bin:/sbin:/usr/bin:/usr/sbin:/opt/bin:/opt/sbin:/opt/usr/bin:/opt/usr/sbin'
 
 ldir="/home/webcam/"
-rdir="/home/username/motion/"
+rdir="/home/_username_/motion/"
 id="username@remote.server"
 
 echo "`date` $0"

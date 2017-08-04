@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>water meter</title>
+<link type="text/css" rel="stylesheet" href="WaterMeter.css" >
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="waterMeter.js"></script>
+</head>
+<body>
+	<div id="meter" class="clock">
+		<div class="centered">
+			<div class="total">
+				<span class="headline" title="accumulated usage">total: <br class="only"></span>
+				<span id="cubicMeters" class="large" title="used full cubic meters of water (accumulated)"></span>
+				<span class="units small" title="cubic meters">m3</span>
+				<span id="litres" class="small" title="used litres of water on top of full m3 (accumulated)"></span>
+				<span class="units total" title="litres (0.001 m3)">L</span>
+				<br>
+					<!--
+					<span id="m3" class="large"></span><span class="units">m3</span>
+					<span id="eur" class="small"></span><span class="units"> euro</span>
+					<span id="hectoLitres"></span><span class="units"> lx100</span>
+					<span id="decaLitres"></span><span class="units"> lx10</span>
+					<span id="deciLitres"></span><span class="units"> lx0.1</span>
+					-->
+			</div>
+			<div class=session>
+				<span class="headline" title="usage for current session">session: <br class="only"></span>
+				<span id="sessionLitres" class="medium" title="usage in litres for current session"></span>
+				<span class="units" title="litres (0.001 m3)">L</span>
+				<span id="sessionEur" class="small money"></span><span class="units money session">&euro;</span>
+				<br>
+			</div>
+			<div class=last>
+				<span class="headline" title="usage between two last readings">last: <br class="only"></span>
+				<span id="instLitres" class="small" title="usage in L/min between two last readings"></span><span class="units last" title="litres per 1 minute">L/min</span>
+	 			<span id="instCents" class="small money"></span><span class="units money last">&cent;/min</span>
+	 			<br>
+			</div>
+			<div class="resetbtn">
+				<button id="resetBut" class="session last total">reset</button>
+			</div>
+		</div> <!-- .cenered -->
+		<p class="note">
+			<a id="helpLink" href="#" title="Click to get help"><img id="helpIcon" src="help_blue.png" alt="?"></a>
+			<span id="pulse" title="seconds past after the last reading obtained"></span><br>
+			<span id="help" >
+				<br>
+				page updated : <span id="pageTime"></span><br>
+				last reading : <span id="readingTime"></span> reading#<span id="readingNum"></span>=<span id="readingValue"></span>imp.<br>
+				session since: <span id="sessionTime"></span> offset=<span id="sessionOffset"></span>m3<br>
+				counter conf : <span id="counterConf"></span> (scale [impulses/m3], price [eur/m3], offset [m3])<br>
+				<br>
+				<a id="toggleDataLink"  href="#">switch between views</a> - &quot;enter&quot;, &quot;shift&quot;+&quot;enter&quot;, click or &quot;ctrl&quot;+click on data<br>
+				<a id="togglePulseLink" href="#">show/hide the &quot;pulse&quot;</a> - &quot;space&quot; or &quot;ctrl&quot;+click<br>
+				<a id="toggleTitleLink" href="#">show/hide data titles</a> - &quot;alt&quot;+&quot;enter&quot;<br> 
+				<a id="toggleResetLink" href="#">show/hide reset button</a> - &quot;shift&quot;+&quot;ctrl&quot;+&quot;enter&quot; or &quot;shift&quot;+&quot;ctrl&quot;+click<br>
+
+				<br>URL request parameters (optional):<br>
+				[section=[[[[[[total|session|last|all|nototal];][title|notitle];][money|nomoney];][pulse|nopulse];][help|nohelp];][reset|noreset]]<br>
+				ex:<br>
+				&#63;section=session&#59;nomoney&#59;notitile&#59;noreset<br>
+				&#63;section=nototal&#59;notitle&#59;noreset<br>
+				<br><br>Press &quot;?&quot; to hide this text.
+			</span><!-- #help -->
+		</p><!-- .note -->
+	</div><!-- #meter -->
+</body>
+</html>
+

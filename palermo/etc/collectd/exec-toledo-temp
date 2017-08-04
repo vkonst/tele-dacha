@@ -1,0 +1,66 @@
+#!/bin/bash
+# Script for the exec plugin (collectd-exec(5))
+#
+# Assumed another process writes sensor readings into $pipe
+# format:
+# "datestamp; sensor_id; value"
+# example:
+# 
+
+HOSTNAME="toledo"
+IDENTIFIER="exec-toledo-temp"
+
+# Sensor is expected to update every $INTERVAL seconds
+INTERVAL=120
+#INTERVAL="${COLLECTD_INTERVAL:-60}"
+
+# Named pipe to read sensor data from
+pipe="/tmp/toledo_sensors"
+
+# Declare array of known sensors. Format:
+# sensor[28.5AD92F010000]="tmp-maria.room_heat"
+source ./exec-toledo-temp.sensors
+
+function log {
+logger -t "$IDENTIFIER" "$"
+}
+
+function parse {
+IFS=";" read -r TIMESTAMP SENSOR VALUE <<< "$1"
+VALUE=$(grep -Eo "\-?[0-9]+.[0-9]*" <<< "$VALUE")
+if [ "$VALUE" == "" ]; then VALUE="U"; fi
+TIMESTAMP = `date +%s -d "$TIMESTAMP"`
+if [ $? -ne 0 ]; then TIMESTAMP = "N"; fi
+SENSOR = `tr -D " " <<< "$SENSOR"`
+
+if 
+}
+
+log "starting"
+
+while true; do
+	if [[ -p $pipe ]]; then
+
+		read -r line < $pipe
+		if [[ "$line" == 'quit' ]]; then break; fi
+
+		
+		echo "PUTVAL $HOSTNAME/$IDENTIFIER/$SENSOR interval=$INTERVAL $TIMESTAMP:$TEMP"
+	fi
+done
+
+log "exiting"
+
+# process that writes to the pipe (example):
+#pipe="/tmp/toledo_sensors"
+#trap "rm -f $pipe" EXIT
+#if [[ ! -p $pipe ]]; then
+#    mkfifo $pipe
+#fi
+#
+#if [[ "$1" ]]; then
+#    echo "$1" >$pipe
+#else
+#    echo "Hello from $$" >$pipe
+#fi
+

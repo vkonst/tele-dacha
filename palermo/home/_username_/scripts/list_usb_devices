@@ -1,0 +1,14 @@
+for X in /sys/bus/usb/devices/*; do 
+  VEND=`cat "$X/idVendor"  2>/dev/null`
+  PROD=`cat "$X/idProduct" 2>/dev/null`
+  if [ "$?" -eq "0" ]; then 
+    echo $X $VEND:$PROD
+    lsusb -d "$VEND:$PROD"
+    DR=`ls -la $X/driver 2>/dev/null`
+    if [ "$?" -eq "0" ]; then echo $DR; fi
+  fi
+done
+
+#lsusb -v
+#lsusb -t
+#udevadm test -a -n /dev/video0

@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+ <title>USB-hub@vkhome-fi.debian control</title>
+ <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1"> 
+ <style type="text/css">
+   button {
+	font-size: 2em;
+	margin-left: 1em;
+	margin-right: 1em;
+	margin-top: 1em;
+	margin-bottom: 1em;
+	width: 15em;
+	height: 3em;
+	border-radius: 1em;
+	vertical-align: middle;
+   }
+   button:hover   { font-weight: bold;}
+   button.danger  { background: red; }
+   button.warning { background: orange; }
+   button.safe    { background: green; }      
+ </style>
+
+ <script type="text/javascript">
+ function sendCommand(command, button) {
+   var innerHtml = button.innerHTML;
+   var xhr = new XMLHttpRequest();
+   xhr.open('GET', '../cgi-bin/usb-hub-ctrl.sh?cmd=' + command, true);
+   xhr.onreadystatechange = function() {
+     if (xhr.readyState != 4) return;
+     button.innerHTML = innerHtml;
+     button.disabled = false;
+     if (xhr.status != 200) {
+       document.getElementById("results").innerHTML += xhr.status + ': ' + xhr.statusText;
+     } else {
+       document.getElementById("results").innerHTML += xhr.responseText;
+     }
+   }
+  xhr.send();
+  button.innerHTML = 'Sending...';
+  button.disabled = true;
+ }
+ </script>
+
+</head>
+
+<body>
+
+<div> 
+  <h2>It switches the power supply of the USB-hub@vkhome-fi.debian</h2>
+  <h2 style="color:red">Leave this page unless clear understand the outcomes!</h2>
+  </br>
+  <div class="buttons">
+    <button type="button" class="warning" onclick="sendCommand('turn_of_for_300_secs', this)" class="w3-btn w3-margin-bottom">Switch OFF USB-hub for 5min</button>
+    <button type="button" class="warning" onclick="sendCommand('toggle', this)" class="w3-btn">Switch OFF USB-hub for 0.3s</button>
+    </br>
+    </br>
+    <button type="button" class="safe" onclick="sendCommand('on', this)" class="w3-btn">Switch On USB-hub</button>
+    <button type="button" class="danger" onclick="sendCommand('off', this)" class="w3-btn">Switch Off USB-hub</button>
+    </br>
+    </br>
+  </div>
+  <p>Results:</br>
+    <div id="results"><div>
+  </p>
+</div>
+</body>
+</html>

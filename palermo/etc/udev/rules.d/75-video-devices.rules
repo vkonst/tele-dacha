@@ -1,0 +1,5 @@
+# Logitech QuickCam Sphere (lake-side cam) 
+# DRIVER="uvcvideo"
+KERNEL=="video[0-9]*", SUBSYSTEM=="video4linux", SUBSYSTEMS=="usb", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="08b5", NAME="video1", SYMLINK+="video-sphere"
+# Logitech HD Pro Webcam C920 (road-side cam)
+KERNEL=="video[0-9]*", SUBSYSTEM=="video4linux", SUBSYSTEMS=="usb", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="082d", NAME="video0", SYMLINK+="video-c920"

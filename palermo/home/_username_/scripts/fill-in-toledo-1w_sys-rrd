@@ -1,0 +1,17 @@
+#!/bin/bash
+# Script writes a line from STDIN to $the_pipe
+# for the /etc/collectd/exec-toledo-originate plugin
+# The data must be pre-formatted before passing to the script
+
+the_pipe="/tmp/1w_sys_pipe"
+
+if [[ ! -p $the_pipe ]]; then
+    echo "Reader not running"
+    exit 1
+fi
+
+cat | while read -r line; do
+ if [[ "$line" ]]; then
+    echo $line | tee $the_pipe
+ fi
+done

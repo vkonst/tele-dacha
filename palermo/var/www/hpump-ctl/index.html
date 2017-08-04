@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+ <title>vkhome-fi HPump control</title>
+ <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1"> 
+ <script src="hpump-ctl.js"></script>
+ <link rel="stylesheet" type="text/css" href="hpump-ctl.css">
+</head>
+
+<body onKeyPress="return keyPressed(event)" onKeyUp="keyUp(event)" onload="autoRun()">
+
+<!-- show video from camera -->
+<div class="img" id="webcam"> 
+  <a target="_parent" href="javascript:runCmd('snapshot')"><img id="live" src="images/laststap.jpg"></a>
+  <p id="banner"></p>
+</div>
+
+<br class="clearboth">
+
+<!-- keyboard -->
+<div id="keyboard"><table><tbody>
+
+ <tr>
+  <td></td>
+  <td><div class="img">
+  <a target="_parent" href="javascript:runCmd('up')"><img id="up" src="images/up.png" alt="Up"></a>
+  </div></td>
+  <td></td>
+ </tr>
+
+ <tr>
+  <td><div class="img"> 
+  <a target="_parent" href="javascript:runCmd('left')"><img id="left" src="images/left.png" alt="Left"></a>
+  </div></td>
+  <td><div class="img">
+  <a target="_parent" href="javascript:runCmd('cam')"><img id="cam" src="images/cam.png" alt="Webcam"></a>
+  </div></td>
+  <td><div class="img"> 
+  <a target="_parent" href="javascript:runCmd('right')"><img  id="right" src="images/right.png" alt="Right"></a>
+  </div></td>
+ </tr>
+
+ <tr>
+  <td></td>
+  <td><div class="img">
+  <a target="_parent" href="javascript:runCmd('down')"><img  id="down" src="images/down.png" alt="Down"></a>
+  </div></td>
+  <td><div class="img">
+  <a target="_parent" href="javascript:runCmd('mic')"><img id="mic" src="images/mic.png" alt="Microphone"></a>
+  </div></td>
+ </tr>
+
+</tbody></table></div>
+
+<br class="clearboth">
+
+<!-- the value of result is returned from runCmd function (it is Ajax function) -->
+<p class="padding"><span id="result"></span></p>
+
+<!--<p><audio controls>-->
+<!--<source src="javascript:audioStream('mpeg')" type="audio/mpeg"/>-->
+<!--<source src="http://audio-ogg.ibiblio.org:8000/wcpe.ogg.m3u">-->
+<!--<em>Sorry, your browser doesn't support HTML5 audio.</em>-->
+<!--</audio></p>-->
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+_username_ ALL= NOPASSWD: /etc/init.d/mosquitto status
+_username_ ALL= NOPASSWD: /etc/init.d/mosquitto start
+
+_username_ ALL= NOPASSWD: /bin/mkdir /var/run/mqtt/
+_username_ ALL= NOPASSWD: /bin/chown _username_ /var/run/mqtt/

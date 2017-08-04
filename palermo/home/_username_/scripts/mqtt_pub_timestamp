@@ -1,0 +1,11 @@
+#!/bin/sh
+# scripts/mqtt_pub_timestamp
+# timestamp topic:
+# $1 - monthly|weekly|daily|hourly|quoterly|fiveminutes
+
+. /etc/mqtt/mqtt.conf
+
+timestamp="@`date +%s`"
+
+/usr/local/bin/mosquitto_pub -t $MQTT_root_topic/time/$1 -m "$timestamp" \
+  -h $MQTT_broker -p $MQTT_port -u $MQTT_user -P "$MQTT_passw"

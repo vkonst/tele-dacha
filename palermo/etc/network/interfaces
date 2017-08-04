@@ -1,0 +1,25 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary WAN (internet) iface
+auto usb0
+iface usb0 inet dhcp
+	mtu 1482
+
+# The primary LAN interface
+#allow-hotplug eth0
+auto eth0
+iface eth0 inet static
+	address 192.168.XXX.XX7
+	netmask 255.255.XXX.XXX
+	network 192.168.XXX.XXX
+	broadcast 192.168.XXX.XXX
+	mtu 1482
+#	gateway 192.168.XXX.XX7
+	# dns-* options are implemented by the resolvconf package, if installed
+#	dns-nameservers 192.168.XXX.XX7, 8.8.8.8
+#	dns-search vkhome-fi

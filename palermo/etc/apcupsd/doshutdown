@@ -1,0 +1,41 @@
+#!/bin/sh
+# doshutdown event processor for apccontrol
+
+SCRIPT="/etc/apcupsd/doshutdown"
+LOGGER="/usr/bin/logger $@ -t `basename $0[$$]`"
+
+SYSADMIN=root,username@gmail.com
+APCUPSD_MAIL="mail"
+HOSTNAME=`hostname`
+
+email() {
+# $1 - message to send
+#
+local SUBJ="$HOSTNAME `basename $0`"
+local MSG="${1:-$HOSTNAME Power Failure}"
+#
+(  echo "Subject: $SUBJ"
+   echo " "
+   echo "$MSG"
+   echo
+   /sbin/apcaccess status ) | $APCUPSD_MAIL -s "$SUBJ" $SYSADMIN
+}
+
+/usr/bin/wall "apcupsd: UPS is switching off!!!"
+
+if test -x /etc/apcupsd/before_ups_off.sh; then
+ $LOGGER "calling before_ups_off.sh"
+ email "calling before_ups_off.sh"
+ /etc/apcupsd/before_ups_off.sh &
+fi
+
+if test -x /etc/apcupsd/clever_poweroff; then
+  # let clever_poweroff decide if shutdown needed
+  /etc/apcupsd/clever_poweroff
+  exit 99
+else
+  # otherwise apcupsd will call shutdown
+  $LOGGER "apcupsd shuts the host down"
+  email  "apcupsd shuts the host down"
+  exit 0
+fi

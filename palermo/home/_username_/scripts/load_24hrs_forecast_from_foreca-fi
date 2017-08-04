@@ -1,0 +1,15 @@
+#!/bin/sh
+
+if [ "www-data" = "`whoami`" ]; then
+  outFile=/var/www/include/foreca.fi
+else
+  outFile=$HOME/foreca.fi
+fi
+
+if [ -f $outFile ]; then rm -f $outFile; fi
+
+/usr/bin/curl \
+  "http://www.foreca.com/meteogram.php?XXXXXXXXXXX \
+  -o $outFile
+
+exit $?

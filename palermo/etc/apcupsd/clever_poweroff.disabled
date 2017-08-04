@@ -1,0 +1,77 @@
+#!/bin/sh
+# file: /etc/apcupsd/clever_poweroff
+
+RTCWAKE="/usr/sbin/rtcwake"
+SHUTDOWN="/sbin/shutdown"
+DATE="/bin/date"
+BC="/usr/bin/bc"
+LOGGER="/usr/bin/logger $@ -t `basename $0[$$]`"
+SYSADMIN='root,username@gmail.com'
+MAIL="/usr/bin/mail"
+HOSTNAME="`/bin/hostname`"
+
+email() {
+# $1 - message to send
+#
+local SUBJ="$HOSTNAME `basename $0`"
+local MSG="${1:-$HOSTNAME Power Failure}"
+#
+(  echo "Subject: $SUBJ"
+   echo " "
+   echo "$MSG"
+   echo " "
+   echo "$0[$$]"
+   echo "onpower=$onpower ; battery = $percent"
+) | $MAIL -s "$SUBJ" $SYSADMIN
+}
+
+# onpower: 0 or 1
+onpower=$(cat /sys/class/power_supply/ACAD/online)
+
+# level ~= 1167000 for my fully charged (but old) battery
+level=$(cat /sys/class/power_supply/BAT1/charge_now)
+
+# $level_full=2200000 for my battery
+level_full=$(cat /sys/class/power_supply/BAT1/charge_full_design)
+
+# percent~=53 for my fully charged (but old) battery
+percent=`echo "scale=0; $level*100/$level_full" | ${BC}`
+
+$LOGGER "onpower=$onpower; battery=$percent%"
+
+if [ "$onpower" -eq "1" ]; then
+	# running on power line. no action
+	exit 99
+fi
+
+if [ "$percent" -gt "30" ]; then
+	$LOGGER "battery charge is enough. shutdown postponed."
+	email "battery charge is enough. shutdown postponed."
+	exit 99
+fi
+
+if [ "$percent" -gt "20" ]; then
+	$LOGGER "low battery. suspending for 4 hours"
+	email "low battery. suspending for 4 hours"
+	${RTCWAKE} -m disk -t `${DATE} +%s -d "4 hours"`
+	exit 99n
+fi
+
+if [ "$percent" -gt "10" ]; then
+        $LOGGER "too low battery. suspending for 10 hours"
+	email "too low battery. suspending for 10 hours"
+	${RTCWAKE} -m disk -t `${DATE} +%s -d "10 hours"`
+	exit 99
+fi
+
+# otherwise shutdown
+$LOGGER echo "critically low battary. shutting down"
+email  "critically low battary. shutting down"
+
+if test -x /etc/apcupsd/before_shutdown.sh; then
+ /etc/apcupsd/before_shutdown.sh &
+fi
+
+$SHUTDOWN -h +1
+
+exit 0

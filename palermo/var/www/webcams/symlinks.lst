@@ -1,0 +1,14 @@
+# links to folders and files
+# use "ln -s target linkName" to create them
+
+var/www/webcams/cam1/ -> /home/motion/cam1/
+var/www/webcams/cam1-archive/ -> /home/motion/archive/cam1/
+var/www/webcams/cam2/ -> /home/motion/cam2/
+var/www/webcams/cam2-archive/ -> /home/motion/archive/cam2/
+var/www/webcams/cam2-lastsnap.jpg -> /home/motion/cam2/lastsnap.jpg
+var/www/webcams/cam3/ -> /home/motion/cam3/
+var/www/webcams/cam3-archive/ -> /home/motion/archive/cam3/
+var/www/webcams/cam3-lastsnap.jpg -> /home/motion/cam3/lastsnap.jpg
+var/www/webcams/cam4/ -> /home/motion/cam4/
+var/www/webcams/cam4-archive/ -> /home/motion/archive/cam4/
+var/www/webcams/cam4-lastsnap.jpg -> /home/motion/cam4/lastsnap.jpg

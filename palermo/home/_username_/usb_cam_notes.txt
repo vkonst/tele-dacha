@@ -1,0 +1,16 @@
+#
+sudo nano /etc/udev/rules.d/75-video-devices.rules
+#
+sudo modprobe -r uvcvideo
+sudo modprobe -r pwc
+#
+sudo udevadm control --reload
+sudo modprobe uvcvideo
+sudo /sbin/modprobe pwc dev_hint=740:1 power_save=1 fps=15 leds=0,0
+#
+ls /dev/video* -la
+sudo udevadm info -a -n /dev/video1
+sudo udevadm info -a -n /dev/video0
+tail /var/log/syslog
+#
+setpwc -p -d /dev/video1

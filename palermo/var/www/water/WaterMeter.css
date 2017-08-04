@@ -1,0 +1,89 @@
+@CHARSET "UTF-8";
+
+body {
+	background-color: #80d4ea;
+}
+
+.centered {
+	position: fixed;
+	width: 100%;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.clock {
+	height: 100%;
+	width: 100%;
+	margin: auto;
+/*	position: absolute;*/
+	top: 0; left: 0; bottom: 0; right: 0;
+	font-family: courier, monospace;
+	text-align: center;
+	color: white;
+	z-index: 10;
+}
+
+.large {
+	font-size: 6.5em;
+}
+
+.small {
+	font-size: 3em;
+}
+
+.medium {
+	font-size: 5em;
+}
+
+.note {
+	color: black;
+	font-family: monospace;
+	font-size: 0.9em;
+    text-align: left;
+}
+
+.headline {
+	padding-right: 1em;
+	font-size: 1em;
+}
+
+.units {
+	font-size: 1.5em;
+	padding-right: 1.5em;
+}
+
+#guide {
+/*	font-style: italic; */
+	font-family: Verdana;
+}
+
+#helplink {
+	z-index: 100;
+}
+
+#helpLink:visited {
+	text-decoration: none;
+}
+
+#helpIcon {
+	width: 4em;
+}
+
+#resetBut {
+    background: #8FDEF5;
+    border: 1 #286788;
+    border-radius: 0.6em;
+    color: #fff;
+    font-family: Sans-serif;
+    font-size: 1em;
+    text-align: center;
+}
+
+#resetBut:hover {
+	background: #3071A9
+}
+
+#pulse {
+	color: white;
+}

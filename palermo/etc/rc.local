@@ -1,0 +1,25 @@
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+# /etc/apcupsd/clever_poweroff 2>&1 &
+
+su - _username_ -c '/bin/date > /tmp/do_not_restart' 2>&1 &
+
+/home/_username_/scripts/ssh_tunnel > /dev/null 2>&1 &
+
+[ -d /var/run/mqtt/ ] || ( /bin/mkdir /var/run/mqtt/; /bin/chown _username_ /var/run/mqtt; )
+su - _username_ -c /home/_username_/scripts/run_mqtt_scripts.sh  > /dev/null 2>&1 &
+
+#su - _username_ -c "/usr/bin/node /home/_username_/scripts/node/re3m/simpleMon/index.js"  > /dev/null 2>&1 &
+
+exit 0

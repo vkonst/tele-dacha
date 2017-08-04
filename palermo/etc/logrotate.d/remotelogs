@@ -1,0 +1,21 @@
+/var/log/toledo.log
+{
+	rotate 55
+	weekly
+	missingok
+	notifempty
+	compress
+	delaycompress
+#	sharedscripts
+}
+
+/var/log/1w-server.log
+{
+        rotate 4
+        weekly
+        missingok
+        notifempty
+        compress
+        delaycompress
+#       sharedscripts
+}

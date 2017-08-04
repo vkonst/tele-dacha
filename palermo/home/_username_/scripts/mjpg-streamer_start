@@ -1,0 +1,2 @@
+#/bin/sh
+mjpg_streamer -i "input_uvc.so -d /dev/video0 -r 640x480 -y" -o "output_http.so --www /var/www/webcam/" -b
